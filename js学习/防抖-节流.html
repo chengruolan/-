@@ -1,0 +1,80 @@
+<!--
+ * @Author: your name
+ * @Date: 2022-04-06 23:27:58
+ * @LastEditTime: 2022-05-15 13:45:09
+ * @LastEditors: chengruolan chengruolan
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /vue源码学习/防抖-节流.html
+-->
+<html>
+
+<body>
+    <div id="mou" style="height: 100%;background-color: aliceblue;"></div>
+</body>
+<script>
+    let dom = document.getElementById('mou')
+    let count = 0
+    let move = (e) => {
+        count++
+        console.log(count, e)
+        dom.innerText = count
+    }
+
+    /** 
+     * 防抖函数 这是非立即执行版本
+     * 函数要等到 wait时间后才会执行
+     */
+    function debounce(callback, wait = 1000) {
+        return function () {
+            let self = this,
+                arg = arguments
+            if (callback.timer) {
+                clearTimeout(callback.timer)
+            }
+            // console.log(arguments)
+            callback.timer = setTimeout(() => {
+                callback.apply(self, arguments)
+            }, wait)
+        }
+    }
+    /**立即执行版本*/
+    function debounceNow(callback, wait = 1000) {
+        return function () {
+            let self = this,
+                arg = arguments
+
+            if (callback.timer) {
+                clearTimeout(callback.timer)
+            } else {
+                callback.apply(self, arguments)
+            }
+            // console.log(arguments)
+            callback.timer = setTimeout(() => {
+                callback.timer = undefined
+                console.log('时间过了可以继续执行')
+            }, wait)
+        }
+    }
+    /**
+     * 节流  规定时间间隔执行函数
+     */
+    function throttle(callback, wait = 1000) {
+        return function () {
+            let self = this,
+                arg = arguments
+            if (!callback.timer) {
+                callback.timer = setTimeout(() => {
+                    callback.apply(self, arguments)
+                    callback.timer = undefined
+                    // console.log('时间过了可以继续执行')
+                }, wait)
+            }
+        }
+    }
+    // dom.onmousemove = throttle(move)
+
+
+
+</script>
+
+</html>

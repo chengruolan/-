@@ -1,0 +1,131 @@
+<!--
+ * @Author: your name
+ * @Date: 2022-03-31 20:44:23
+ * @LastEditTime: 2022-04-11 22:37:55
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: /vue源码学习/aa.html
+-->
+<html>
+    <script>
+
+// 转换前
+let arr = [
+ {province: '浙江省', city: '杭州市', area: '余杭区',},
+ {province: '浙江省', city: '杭州市', area: '西湖区'},
+ {province: '浙江省', city: '嘉兴市', area: '南湖区'},
+ {province: '湖北省', city: '武汉市', area: '武昌区'},
+ {province: '河南省', city: '三门峡市', area: '湖滨区'}
+]
+// 
+function method(arr){
+    let map = new Map()
+    arr.forEach(element => {
+        let province = element.province,city = element.city,area = element.area 
+        // let 
+        let  p = map.get(province)
+        if(p){
+            let c = p.get(city) 
+            if(c){
+                //最后一层
+                c.push(area)
+            }else{
+                //第二层
+                let c = []
+                c.push(area)
+                p.set(city,c)
+            }
+        }else{
+            //第一层
+            let p = new Map()
+            let c = []
+            c.push(area)
+            p.set(city,c)
+            map.set(province,p)
+        }
+    });
+    console.log(map)
+    return getAfterArr(map)
+}
+ 
+function getAfterArr(mapData){
+    let result = []
+    for (const key of mapData.keys()) {
+        let obj = {
+            province:key,
+            citys:[]
+        }
+        let citys = mapData.get(key)
+        for(const key of citys.keys()){
+            //这里应该做一下数组去重
+            obj.citys.push(citys.get(key).map(e =>{
+                return {
+                    area:e
+                }
+            }))
+        }
+        console.log(key,mapData.get(key))
+       
+        result.push(
+            obj
+        )
+    }
+    return result
+}
+
+console.log(method(arr))
+// 转换后
+let afterArr = [
+  {
+   province: '浙江省',
+   citys: [
+    {
+     city: '杭州市',
+     areas: [
+      {
+       area: '余杭区'
+      },
+      {
+       area: '西湖区'
+      }
+     ]
+    },
+    {
+     city: '嘉兴市',
+     areas: [
+      {
+       area: '南湖区'
+      }
+     ]
+    },
+   ]
+  },
+  {
+   province: '湖北省',
+   citys: [
+    {
+     city: '武汉市',
+     areas: [
+      {
+       area: '武昌区'
+      }
+     ]
+    }
+   ]
+  },
+  {
+   province: '河南省',
+   citys: [
+    {
+     city: '三门峡市',
+     areas: [
+      {
+       area: '湖滨区'
+      }
+     ]
+    }
+   ]
+  },
+]
+    </script>
+</html>
