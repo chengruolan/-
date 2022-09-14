@@ -1,0 +1,52 @@
+/* 此文件用于 项目通用样式*/
+
+//======================================== margin
+.margin-left-8 {
+  margin-left: 8px;
+}
+.margin-left-16 {
+  margin-left: 16px;
+}
+
+.margin-right-16 {
+  margin-right: 16px;
+}
+
+//======================================== 布局
+.flex{
+  display: flex;
+}
+
+//上下居中
+.flex-row-center-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+//左右居中
+.flex-row-center-column{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.flex-row-between{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+
+//========================================= loading 加载
+.loadmore {
+  top: 0;
+  position:absolute;
+  right: 0;
+  background-color: rgba($color: #ffffff, $alpha: 0.5);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  justify-content: center;
+}
