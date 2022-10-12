@@ -1,0 +1,175 @@
+<template>
+  <a-button @click="big"> 放大</a-button>
+  <a-button @click="small"> 缩小</a-button>
+  <div>
+    <canvas
+      ref="canvas"
+      oncontextmenu="event.returnValue=false"
+      onselectstart="event.returnValue=false"
+    ></canvas>
+
+  </div>
+</template>
+
+<script>
+import { onMounted, reactive, toRefs } from "vue";
+export default {
+  name: "examplePage",
+  setup() {
+    // const canvas = ref(null);
+    const state = reactive({
+      canvas: null,
+
+      image: new Image(),
+      context: null,
+      initScale: 1,
+      moveMouse: false,
+
+      statusConfig: {
+        //拖拽中
+        DRAG_START: 1,
+        //拖拽结束
+        DRAGGING: 2,
+      },
+      canvasInfo: {
+        height: 500,
+        width: 1200,
+        status: null, //拖拽状态
+        imgX: 0, //相对于canvas的坐标
+        imgY: 0,
+        imgWidth: 0,
+        imgHeight: 0,
+        offsetEvtPos: { x: null, y: null }, //鼠标点击起始位置
+        offset: { x: 0, y: 0 }, //鼠标移动中的位置
+        scale: 1, //缩放比例
+        scaleStep: 0.1, //每次缩放产生的变化量
+        maxScale: 2, //最大缩放倍数
+        minScale: 0.5, //最小缩放倍数
+        statusInfo: 2, //状态
+        interval: null, //拖拽的定时器
+      },
+    });
+
+    onMounted(() => {
+      state.context = state.canvas.getContext("2d");
+      initCanvasImg();
+      state.canvas.onmousedown = mousedown;
+      state.canvas.onmouseup = mouseup;
+      state.canvas.onmousemove = mousemove;
+    });
+
+    const initCanvasImg = () => {
+      // 拿到图片地址
+      state.image.src = require("@/assets/login/background.png");
+      state.image.onload = () => {
+        dramImageByScale();
+      };
+    };
+
+    const mousedown = (e) => {
+      //判断当前点击范围是否选中了图片
+      let { offsetX, offsetY } = e;
+      let { imgWidth, imgHeight, imgX, imgY } = state.canvasInfo;
+      if (
+        offsetX >= imgX &&
+        offsetX <= imgX + imgWidth &&
+        offsetY >= imgY &&
+        offsetY <= imgY + imgHeight
+      ) {
+        //点击的是图片
+        if (e.button == 2) {
+          console.log("右击事件");
+          state.canvas.style.cursor = "move";
+          state.canvasInfo.statusInfo = state.statusConfig.DRAG_START; //开始拖拽
+          state.canvasInfo.offsetEvtPos = { x: offsetX, y: offsetY }; //记录鼠标点击的位置
+        }
+      } else {
+        console.log("请选中图片");
+      }
+
+      // else {
+      //   state.canvas.style = "cursor:crosshair;";
+      // }
+    };
+    const mouseup = () => {
+      state.canvas.style = "cursor:default;";
+      if (state.canvasInfo.statusInfo === state.statusConfig.DRAG_START) {
+        dramImage();
+      }
+      state.canvasInfo.statusInfo = state.statusConfig.DRAGGING; //开始拖拽
+      state.canvasInfo.interval ? clearInterval(state.canvasInfo.interval) : "";
+      state.canvasInfo.interval = null;
+      let { x, y } = state.canvasInfo.offset;
+      state.canvasInfo.imgX = state.canvasInfo.imgX + x;
+      state.canvasInfo.imgX = state.canvasInfo.imgY + y;
+      state.canvasInfo.offset = { x: 0, y: 0 };
+      state.canvasInfo.statusInfo = { x: 0, y: 0 };
+    };
+
+    const mousemove = (e) => {
+      //判断当前状态是不是拖拽中
+      if (state.canvasInfo.statusInfo === state.statusConfig.DRAG_START) {
+        let { x, y } = state.canvasInfo.offsetEvtPos;
+        let { offsetX, offsetY } = e;
+        state.canvasInfo.offset = { x: offsetX - x, y: offsetY - y };
+        state.canvasInfo.interval
+          ? ""
+          : (state.canvasInfo.interval = setInterval(() => {
+              dramImage();
+            }, 100));
+      }
+    };
+
+    //绘制图片
+    const dramImage = () => {
+      state.canvas.width = state.canvasInfo.width;
+      state.canvas.height = state.canvasInfo.height;
+      let { x, y } = state.canvasInfo.offset;
+      state.context.clearRect(0, 0, state.canvasInfo.width, state.canvasInfo.height);
+      //绘制的内容、坐标 被剪切的宽高
+      state.context.drawImage(
+        state.image,
+        state.canvasInfo.imgX + x,
+        state.canvasInfo.imgY + y,
+        state.canvasInfo.imgWidth,
+        state.canvasInfo.imgHeight
+      );
+    };
+
+    //初始化 画布 缩放时候处理
+    const dramImageByScale = () => {
+      let height = state.canvasInfo.height;
+      let width = state.canvasInfo.width;
+      //设置图片的大小 按照图片本身的长宽比 充分填充画布
+      let imgWidth, imgHeight;
+      if (state.image.height > state.image.width) {
+        // 长 > 宽 情况下  上下画布填充
+        imgHeight = height * state.canvasInfo.scale;
+        imgWidth = ((height * state.image.width) / state.image.height) * state.canvasInfo.scale;
+      } else {
+        imgWidth = width * state.canvasInfo.scale;
+        imgHeight = ((width * state.image.height) / state.image.width) * state.canvasInfo.scale;
+      }
+      state.canvasInfo.imgWidth = imgWidth;
+      state.canvasInfo.imgHeight = imgHeight;
+      dramImage();
+    };
+    const big = () => {
+      state.initScale += 0.1;
+      dramImageByScale(state.initScale);
+    };
+    const small = () => {
+      state.initScale -= 0.1;
+      dramImageByScale(state.initScale);
+    };
+    return {
+      ...toRefs(state),
+      // canvas,
+      big,
+      small,
+    };
+  },
+};
+</script>
+
+<style></style>
