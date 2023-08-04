@@ -1,11 +1,3 @@
-# node内置API模块
-
-## fs文件系统模块
-### 什么是fs文件系统模块
-1. fs.readFile(path,[options],callback)
-2. fs.writeFile()
-
-``` javascript
 //1. 导入fs 模块
 const fs = require('fs');
 
@@ -30,49 +22,3 @@ fs.readFile('./nodeTXT/1.txt', 'utf8', (err, dataStr) => {
   //   console.log(err); //成功输出null 失败为错误对象
   //   console.log(dataStr); //失败是undefined
 });
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cls 快捷键 可以清空当前终端输出
