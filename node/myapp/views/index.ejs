@@ -2,10 +2,116 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <table border="1">
+      <thead>
+        <td>id</td>
+        <td>用户名</td>
+        <td>年龄</td>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <br />
+
+    <div>
+      <div>用户名：<input type="text" id="username" name="username" /></div>
+      <div>密码：<input type="password" id="password" name="password" /></div>
+      <div>年龄：<input type="age" id="age" name="age" /></div>
+      <div>
+        <button type="button" id="addUser">注册</button>
+      </div>
+    </div>
+
+    <br />
+    <div>
+      <button type="button" id="update">更新</button>
+      <button type="button" id="userDelete">删除</button>
+    </div>
+
+    <script>
+      let users;
+      fetch(`/api/user`)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res, '=====================');
+          let { data } = res;
+          users = data;
+          var tbody = document.querySelector('tbody');
+          tbody.innerHTML = data
+            .map(
+              (item) =>
+                `
+            <tr>
+              <td>${item._id}</td>
+              <td>${item.username}</td>
+              <td>${item.age}</td>
+            </tr>
+            `
+            )
+            .join('');
+        });
+      var addUser = document.querySelector('#addUser');
+      var update = document.querySelector('#update');
+      var userDelete = document.querySelector('#userDelete');
+
+      var username = document.querySelector('#username');
+      var password = document.querySelector('#password');
+      var age = document.querySelector('#age');
+
+      addUser.onclick = () => {
+        fetch(`/api/user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: username.value,
+            password: password.value,
+            age: age.value,
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+          });
+      };
+
+      update.onclick = () => {
+        let id = users[0]._id;
+        fetch(`/api/user/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: username.value,
+            password: password.value,
+            age: age.value,
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+          });
+      };
+
+      userDelete.onclick = () => {
+        let id = users[0]._id;
+        fetch(`/api/user/${id}`, {
+          method: 'delete',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+          });
+      };
+    </script>
   </body>
 </html>
