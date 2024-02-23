@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>css学习相关</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      p,
+      div {
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        background: yellow;
+      }
+      DIV {
+        background-color: black;
+        width: 200px;
+        height: 200px;
+        color: white;
+
+        margin-top: 20px;
+      }
+      .AAA {
+        /* box-sizing: border-box; */
+        color: blanchedalmond;
+      }
+      .test2 {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: beige;
+      }
+
+      option:checked {
+        color: beige;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>查看是否区分大小写的</h1>
+    <div class="aaa">查看是否区分大小写的</div>
+
+    <div class="AAA">
+      <span class="test2"> 这里是行内元素span</span>
+      <span> 这里是行内元素span</span>
+      <img class="test2" />
+    </div>
+
+    <div class="test3">
+      <a href="" style="padding-top: 10px; padding-bottom: 10px">内联元素a</a>
+    </div>
+
+    <div class="test5">
+      <select name="" id="">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+      </select>
+    </div>
+
+    <bdo dir="rtl">Here is some text</bdo>
+    <div style="display: none">
+      <img src="mypic.jpg" alt="My photo" />
+    </div>
+  </body>
+</html>
